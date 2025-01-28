@@ -6,8 +6,9 @@ import SearchInput from './SearchInput';
 import GalleryGrid from './GalleryGrid';
 import { useSearchParams } from 'react-router-dom';
 import SkeletonGrid from './SkeletonGrid';
+import Pagination from './Pagination';
 
-const Gallery = () => {
+const GalleryPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const initialQuery = searchParams.get('query') || '';
   const [query, setQuery] = useState(initialQuery);
@@ -105,10 +106,13 @@ const Gallery = () => {
   return (
     <div className="grid grid-cols-1">
       <div className="fixed top-0 left-0 bg-zinc-900 z-10 w-full py-5">
-
         <div className="flex justify-center">
           <SearchInput onSearch={handleSearch} />
         </div>
+      </div>
+
+      <div className='flex justify-start mb-4'>
+        <Pagination />
       </div>
 
       <div className="relative min-h-[540px]">
@@ -125,17 +129,9 @@ const Gallery = () => {
             <GalleryGrid photos={allPhotos} />
           )}
         </div>
-
-        {allPhotos.length > 0 && (
-          <LoadMoreTrigger
-            onInView={loadMoreImages}
-            isFetchingMore={isFetchingMore}
-            loadCountdown={loadCountdown}
-          />
-        )}
       </div>
     </div>
   );
 };
 
-export default Gallery;
+export default GalleryPage;
