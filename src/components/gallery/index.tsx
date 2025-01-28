@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import usePhotosQuery from '../../queries/usePhotosQuery';
 import type { PhotosWithTotalResults } from 'pexels';
-import LoadMoreTrigger from './LoadMoreTrigger';
 import SearchInput from './SearchInput';
 import GalleryGrid from './GalleryGrid';
 import { useSearchParams } from 'react-router-dom';
@@ -29,14 +28,6 @@ const GalleryPage = () => {
     per_page: 11,
     page: page,
   });
-
-  const loadMoreImages = useCallback(() => {
-    if (loadCountdown !== null) return;
-
-    setIsFetchingMore(true);
-    setPage((prevPage) => prevPage + 1);
-    setLoadCountdown(3);
-  }, [loadCountdown]);
 
   // used to clear the photos when the query changes
   useEffect(() => {
