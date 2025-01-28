@@ -1,20 +1,35 @@
 import { useState } from 'react';
 import { Button } from '../Button';
+import { useSearchParams } from 'react-router-dom';
 
 const Pagination = () => {
-  const [currentPage, setCurrentPage] = useState(0);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  function addPageParam(page: number) {
+    setSearchParams({ page: `${page}` });
+  }
 
   function goBack() {
-    setCurrentPage((val) => val - 1);
+    if (currentPage === 0 || currentPage === 1) return;
+
+    updatePage(-1);
   }
 
   function goForward() {
-    setCurrentPage((val) => val + 1);
+    updatePage(1);
+  }
+
+  function updatePage(page: number) {
+    const newPage = currentPage + page;
+    setCurrentPage(newPage);
+    addPageParam(newPage);
   }
 
   return (
     <div className="flex justify-between items-center">
-      <Button className="px-4" onClick={goBack} disabled={true}>
+      <Button className="px-4" onClick={goBack} disabled={currentPage <= 1}>
         {' < '}
       </Button>
 
