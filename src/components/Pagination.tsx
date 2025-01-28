@@ -1,14 +1,23 @@
 import { useState } from 'react';
-import { Button } from '../Button';
+import { Button } from './Button';
 import { useSearchParams } from 'react-router-dom';
+import { logParams } from './misc/helpers';
 
 const Pagination = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [currentPage, setCurrentPage] = useState(1);
+  const initialPage = Number(searchParams.get('page')) || 1;
+  const [currentPage, setCurrentPage] = useState(initialPage);
 
   function addPageParam(page: number) {
-    setSearchParams({ page: `${page}` });
+    setSearchParams((prevParams) => {
+      const newParams = new URLSearchParams(prevParams);
+      newParams.set('page', `${page}`);
+
+      logParams(newParams);
+
+      return newParams;
+    });
   }
 
   function goBack() {

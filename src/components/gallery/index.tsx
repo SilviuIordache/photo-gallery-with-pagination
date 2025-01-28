@@ -1,11 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
 import usePhotosQuery from '../../queries/usePhotosQuery';
 import type { PhotosWithTotalResults } from 'pexels';
-import SearchInput from './SearchInput';
+import SearchInput from '../SearchInput';
 import GalleryGrid from './GalleryGrid';
 import { useSearchParams } from 'react-router-dom';
 import SkeletonGrid from './SkeletonGrid';
-import Pagination from './Pagination';
+import Pagination from '../Pagination';
 
 const GalleryPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -28,6 +28,10 @@ const GalleryPage = () => {
     per_page: 11,
     page: page,
   });
+
+  // useEffect(() => {
+  //   console.log('searchParams changed: ', searchParams);
+  // }, [searchParams])
 
   // used to clear the photos when the query changes
   useEffect(() => {
@@ -62,7 +66,6 @@ const GalleryPage = () => {
   const handleSearch = useCallback(
     (query: string) => {
       setQuery(query);
-      setPage(1);
 
       if (query) {
         setSearchParams({ query });
@@ -75,6 +78,7 @@ const GalleryPage = () => {
 
   // used to handle the initial query
   useEffect(() => {
+    console.log('inside this effect');
     if (initialQuery) {
       handleSearch(initialQuery);
     }
@@ -102,7 +106,7 @@ const GalleryPage = () => {
         </div>
       </div>
 
-      <div className='flex justify-start mb-4'>
+      <div className="flex justify-start mb-4">
         <Pagination />
       </div>
 
