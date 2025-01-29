@@ -10,8 +10,10 @@ import { useSearchParams } from 'react-router-dom';
 const GalleryPage = () => {
   const [searchParams] = useSearchParams();
 
-  const [page, setPage] = useState(0);
+  const initialPage = Number(searchParams.get('page')) || 1;
+  const [page, setPage] = useState(initialPage);
   const [query, setQuery] = useState('');
+  const [prevQuery, setPrevQuery] = useState('');
 
   const [photos, setPhotos] = useState<PhotosWithTotalResults['photos']>([]);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
@@ -30,17 +32,19 @@ const GalleryPage = () => {
 
   // used to set new query or page when they change
   useEffect(() => {
-    const newPage = searchParams.get('page');
-    const newSearchTerm = searchParams.get('query');
+    const page = searchParams.get('page');
+    const query = searchParams.get('query');
 
-    if (newPage) {
-      setPage(Number(newPage));
+    if (page) {
+      setPage(Number(page));
     }
 
-    if (newSearchTerm) {
-      setQuery(newSearchTerm);
+    if (query && query !== prevQuery) {
+      setQuery(query);
+      setPage(1);
+      setPrevQuery(query);
     }
-  }, [searchParams]);
+  }, [searchParams, prevQuery]);
 
   // used to clear the photos when the query changes
   useEffect(() => {
@@ -95,7 +99,7 @@ const GalleryPage = () => {
       </div>
 
       <div className="flex justify-start mb-4">
-        <Pagination />
+        <Pagination currentPage={page} setPage={setPage} />
       </div>
 
       <div className="relative min-h-[540px]">
