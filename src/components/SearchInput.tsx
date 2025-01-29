@@ -9,13 +9,9 @@ const SearchInput = () => {
   const [inputValue, setInputValue] = useState(initialQuery);
 
   const handleSearch = (query: string) => {
-    setQuery(query);
-
-    if (query) {
-      setSearchParams({ query });
-    } else {
-      setSearchParams({});
-    }
+    const newParams = new URLSearchParams({...searchParams});
+    newParams.set('query', `${query}`);
+    setSearchParams(newParams);
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {

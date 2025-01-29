@@ -16,7 +16,6 @@ const Pagination = () => {
 
   function goBack() {
     if (currentPage === 0 || currentPage === 1) return;
-
     updatePage(-1);
   }
 
