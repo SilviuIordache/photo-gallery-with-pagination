@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-
 const SearchInput = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -9,8 +8,8 @@ const SearchInput = () => {
   const [inputValue, setInputValue] = useState(initialQuery);
 
   const handleSearch = (query: string) => {
-    const newParams = new URLSearchParams({...searchParams});
-    newParams.set('query', `${query}`);
+    const newParams = new URLSearchParams();
+    newParams.set('query', query);
     setSearchParams(newParams);
   };
 

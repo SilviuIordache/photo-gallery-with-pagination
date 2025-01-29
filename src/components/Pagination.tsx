@@ -9,8 +9,8 @@ const Pagination = () => {
   const [currentPage, setCurrentPage] = useState(initialPage);
 
   function addPageParam(page: number) {
-    const newParams = new URLSearchParams({...searchParams});
-    newParams.set('page', `${page}`);
+    const newParams = new URLSearchParams(searchParams.toString());
+    newParams.set('page', String(page));
     setSearchParams(newParams);
   }
 
