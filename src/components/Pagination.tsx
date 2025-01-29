@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Button } from './Button';
 import { useSearchParams } from 'react-router-dom';
-import { logParams } from './misc/helpers';
 
 const Pagination = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -13,8 +12,6 @@ const Pagination = () => {
     setSearchParams((prevParams) => {
       const newParams = new URLSearchParams(prevParams);
       newParams.set('page', `${page}`);
-
-      logParams(newParams);
 
       return newParams;
     });

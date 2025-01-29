@@ -1,11 +1,22 @@
 import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
-interface SearchInputProps {
-  onSearch: (query: string) => void;
-}
 
-const SearchInput = ({ onSearch }: SearchInputProps) => {
-  const [inputValue, setInputValue] = useState('');
+const SearchInput = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const initialQuery = searchParams.get('query') || '';
+  const [inputValue, setInputValue] = useState(initialQuery);
+
+  const handleSearch = (query: string) => {
+    setQuery(query);
+
+    if (query) {
+      setSearchParams({ query });
+    } else {
+      setSearchParams({});
+    }
+  };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
@@ -13,7 +24,7 @@ const SearchInput = ({ onSearch }: SearchInputProps) => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    onSearch(inputValue);
+    handleSearch(inputValue);
     setInputValue('');
   };
 

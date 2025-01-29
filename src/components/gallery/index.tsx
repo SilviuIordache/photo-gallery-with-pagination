@@ -1,20 +1,19 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import usePhotosQuery from '../../queries/usePhotosQuery';
 import type { PhotosWithTotalResults } from 'pexels';
 import SearchInput from '../SearchInput';
 import GalleryGrid from './GalleryGrid';
-import { useSearchParams } from 'react-router-dom';
 import SkeletonGrid from './SkeletonGrid';
 import Pagination from '../Pagination';
+import { useSearchParams } from 'react-router-dom';
 
 const GalleryPage = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const initialQuery = searchParams.get('query') || '';
-  const [query, setQuery] = useState(initialQuery);
-  const [page, setPage] = useState(1);
-  const [allPhotos, setAllPhotos] = useState<PhotosWithTotalResults['photos']>(
-    []
-  );
+  const [searchParams] = useSearchParams();
+
+  const [page, setPage] = useState(0);
+  const [query, setQuery] = useState('');
+
+  const [photos, setPhotos] = useState<PhotosWithTotalResults['photos']>([]);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [loadCountdown, setLoadCountdown] = useState<number | null>(3);
   const [showSkeletonLoader, setShowSkeletonLoader] = useState(true);
@@ -29,19 +28,29 @@ const GalleryPage = () => {
     page: page,
   });
 
-  // useEffect(() => {
-  //   console.log('searchParams changed: ', searchParams);
-  // }, [searchParams])
+  // used to set new query or page when they change
+  useEffect(() => {
+    const newPage = searchParams.get('page');
+    const newSearchTerm = searchParams.get('query');
+
+    if (newPage) {
+      setPage(Number(newPage));
+    }
+
+    if (newSearchTerm) {
+      setQuery(newSearchTerm);
+    }
+  }, [searchParams]);
 
   // used to clear the photos when the query changes
   useEffect(() => {
-    setAllPhotos([]);
+    setPhotos([]);
   }, [query]);
 
   // used to update the photos after loading more
   useEffect(() => {
     if (photosResponse && 'photos' in photosResponse) {
-      setAllPhotos((prevPhotos) => [...prevPhotos, ...photosResponse.photos]);
+      setPhotos(photosResponse.photos);
       setIsFetchingMore(false);
     }
   }, [photosResponse]);
@@ -63,27 +72,6 @@ const GalleryPage = () => {
     return () => clearInterval(interval);
   }, [loadCountdown]);
 
-  const handleSearch = useCallback(
-    (query: string) => {
-      setQuery(query);
-
-      if (query) {
-        setSearchParams({ query });
-      } else {
-        setSearchParams({});
-      }
-    },
-    [setSearchParams]
-  );
-
-  // used to handle the initial query
-  useEffect(() => {
-    console.log('inside this effect');
-    if (initialQuery) {
-      handleSearch(initialQuery);
-    }
-  }, [handleSearch, initialQuery]);
-
   useEffect(() => {
     if (!isLoadingPhotos) {
       const timer = setTimeout(() => {
@@ -102,7 +90,7 @@ const GalleryPage = () => {
     <div className="grid grid-cols-1">
       <div className="fixed top-0 left-0 bg-zinc-900 z-10 w-full py-5">
         <div className="flex justify-center">
-          <SearchInput onSearch={handleSearch} />
+          <SearchInput />
         </div>
       </div>
 
@@ -111,7 +99,7 @@ const GalleryPage = () => {
       </div>
 
       <div className="relative min-h-[540px]">
-        {!allPhotos.length && !isFetchingMore && (
+        {!photos.length && !isFetchingMore && (
           <div className="absolute inset-0 flex items-center justify-center text-lg text-gray-500">
             Loading images...
           </div>
@@ -121,7 +109,7 @@ const GalleryPage = () => {
           {showSkeletonLoader ? (
             <SkeletonGrid />
           ) : (
-            <GalleryGrid photos={allPhotos} />
+            <GalleryGrid photos={photos} />
           )}
         </div>
       </div>
